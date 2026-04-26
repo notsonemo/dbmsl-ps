@@ -1,0 +1,105 @@
+mysql> CREATE TABLE customers(
+    ->     custID varchar(10) PRIMARY KEY,
+    ->     name varchar(20),
+    ->     cust_addr varchar(50),
+    ->     phn_no int(10),
+    ->     email_id varchar(30),
+    ->     age int (2)
+    -> );
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> CREATE TABLE branches(
+    ->     branchID varchar(10) PRIMARY KEY,
+    ->     branch_name varchar(20),
+    ->     address varchar(20)
+    -> );
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> CREATE TABLE accounts(
+    ->     acc_no varchar(10) PRIMARY KEY,
+    ->     branchID varchar(10),
+    ->     custID varchar(10),
+    ->     date_open varchar(10),
+    ->     acc_type varchar(10),
+    ->     balance decimal(12,2),
+    ->     FOREIGN KEY (branchID) REFERENCES branches(branchID),
+    ->     FOREIGN KEY (custID) REFERENCES customers(custID)
+    -> );
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> show tables;
++---------------+
+| Tables_in_ps6 |
++---------------+
+| accounts      |
+| branches      |
+| customers     |
++---------------+
+3 rows in set (0.00 sec)
+
+mysql> create index idx_acc_pk on accounts(acc_no);
+Query OK, 0 rows affected (0.09 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> create view cust_info as
+    -> select * from customers
+    -> where age<45;
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> update accounts set date_open='2017-04-16';
+Query OK, 3 rows affected (0.04 sec)
+Rows matched: 3  Changed: 3  Warnings: 0
+
+
+mysql> alter table branches modify branchID int auto_increment;
+ERROR 3780 (HY000): Referencing column 'branchID' and referenced column 'branchID' in foreign key constraint 'accounts_ibfk_1' are incompatible.
+////MySQL uses AUTO_INCREMENT instead of SEQUENCE\\\\\
+
+mysql> create view branch_info as select * from branches;
+Query OK, 0 rows affected (0.04 sec)
+
+
+
+
+-------------------------------------------------extra-------------------------------------------------------------------
+
+
+mysql> select * from cust_info;
++--------+---------------+-----------+----------+------+----------+
+| custID | name          | cust_addr | phn_no   | age  | email_id |
++--------+---------------+-----------+----------+------+----------+
+| C101   | Namrata Ahuja | Pune      |  8368929 |   20 | NULL     |
+| C102   | Anant Garg    | Mumbai    | 82838742 |   22 | NULL     |
+| C103   | Unnati Jain   | Delhi     | 90377281 |   25 | NULL     |
++--------+---------------+-----------+----------+------+----------+
+3 rows in set (0.00 sec)
+
+mysql> select * from customers,branches,accounts;
++--------+---------------+-----------+----------+------+----------+----------+-------------+----------+--------+----------+--------+------------+----------+-----------+
+| custID | name          | cust_addr | phn_no   | age  | email_id | branchID | branch_name | address  | acc_no | branchID | custID | date_open  | acc_type | balance   |
++--------+---------------+-----------+----------+------+----------+----------+-------------+----------+--------+----------+--------+------------+----------+-----------+
+| C103   | Unnati Jain   | Delhi     | 90377281 |   25 | NULL     | B100     | Pune Main   | FCR Pune | A10001 | B100     | C101   | 2017-04-16 | S        |  67000.00 |
+| C102   | Anant Garg    | Mumbai    | 82838742 |   22 | NULL     | B100     | Pune Main   | FCR Pune | A10001 | B100     | C101   | 2017-04-16 | S        |  67000.00 |
+| C101   | Namrata Ahuja | Pune      |  8368929 |   20 | NULL     | B100     | Pune Main   | FCR Pune | A10001 | B100     | C101   | 2017-04-16 | S        |  67000.00 |
+| C103   | Unnati Jain   | Delhi     | 90377281 |   25 | NULL     | B100     | Pune Main   | FCR Pune | A10002 | B100     | C102   | 2017-04-16 | C        |  98000.00 |
+| C102   | Anant Garg    | Mumbai    | 82838742 |   22 | NULL     | B100     | Pune Main   | FCR Pune | A10002 | B100     | C102   | 2017-04-16 | C        |  98000.00 |
+| C101   | Namrata Ahuja | Pune      |  8368929 |   20 | NULL     | B100     | Pune Main   | FCR Pune | A10002 | B100     | C102   | 2017-04-16 | C        |  98000.00 |
+| C103   | Unnati Jain   | Delhi     | 90377281 |   25 | NULL     | B100     | Pune Main   | FCR Pune | A10003 | B100     | C103   | 2017-04-16 | S        | 108000.00 |
+| C102   | Anant Garg    | Mumbai    | 82838742 |   22 | NULL     | B100     | Pune Main   | FCR Pune | A10003 | B100     | C103   | 2017-04-16 | S        | 108000.00 |
+| C101   | Namrata Ahuja | Pune      |  8368929 |   20 | NULL     | B100     | Pune Main   | FCR Pune | A10003 | B100     | C103   | 2017-04-16 | S        | 108000.00 |
++--------+---------------+-----------+----------+------+----------+----------+-------------+----------+--------+----------+--------+------------+----------+-----------+
+9 rows in set (0.05 sec)
+
+mysql> UPDATE cust_info SET age = 40 WHERE custID = 'C101';
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from cust_info;
++--------+---------------+-----------+----------+------+----------+
+| custID | name          | cust_addr | phn_no   | age  | email_id |
++--------+---------------+-----------+----------+------+----------+
+| C101   | Namrata Ahuja | Pune      |  8368929 |   40 | NULL     |
+| C102   | Anant Garg    | Mumbai    | 82838742 |   22 | NULL     |
+| C103   | Unnati Jain   | Delhi     | 90377281 |   25 | NULL     |
++--------+---------------+-----------+----------+------+----------+
+3 rows in set (0.00 sec)

@@ -1,0 +1,179 @@
+Enter password: *******
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.46 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2026, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| ps6                |
+| sakila             |
+| sys                |
+| world              |
++--------------------+
+7 rows in set (0.03 sec)
+
+mysql> use ps6;
+Database changed
+mysql> show tables;
++---------------+
+| Tables_in_ps6 |
++---------------+
+| branches      |
+| customers     |
++---------------+
+2 rows in set (0.01 sec)
+
+
+mysql> CREATE TABLE accounts(
+    ->     acc_no varchar(10) PRIMARY KEY,
+    ->     branchID varchar(10),
+    ->     custID varchar(10),
+    ->     date_open varchar(10),
+    ->     acc_type varchar(10),
+    ->     balance decimal(12,2),
+    ->     FOREIGN KEY (branchID) REFERENCES branches(branchID),
+    ->     FOREIGN KEY (custID) REFERENCES customers(custID)
+    -> );
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> show tables;
++---------------+
+| Tables_in_ps6 |
++---------------+
+| accounts      |
+| branches      |
+| customers     |
++---------------+
+3 rows in set (0.00 sec)
+
+mysql> insert into customers values('C101','Namrata Ahuja','Pune','8368924689','nam@gmail.com',20);
+ERROR 1264 (22003): Out of range value for column 'phn_no' at row 1
+mysql> insert into customers values('C101','Namrata Ahuja','Pune','8368929','nam@gmail.com',20);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customers values('C102','Anant Garg','Mumbai','82838742','anantg@gmail.com',22);
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into customers values('C103','Unnati Jain','Delhi','90377281','unnj@gmail.com',25);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into branches values('B100','Pune Main','FCR Pune');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into accounts values('A10001','B100','C101','10-12-2020','S',67000.00);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into accounts values('A10002','B100','C102','31-01-2019','C',98000.00);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into accounts values('A10003','B100','C103','05-08-2022','S',108000.00);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from customers;
++--------+---------------+-----------+----------+------------------+------+
+| custID | name          | cust_addr | phn_no   | email_id         | age  |
++--------+---------------+-----------+----------+------------------+------+
+| C101   | Namrata Ahuja | Pune      |  8368929 | nam@gmail.com    |   20 |
+| C102   | Anant Garg    | Mumbai    | 82838742 | anantg@gmail.com |   22 |
+| C103   | Unnati Jain   | Delhi     | 90377281 | unnj@gmail.com   |   25 |
++--------+---------------+-----------+----------+------------------+------+
+3 rows in set (0.00 sec)
+
+mysql> select * from branches;
++----------+-------------+----------+
+| branchID | branch_name | address  |
++----------+-------------+----------+
+| B100     | Pune Main   | FCR Pune |
++----------+-------------+----------+
+1 row in set (0.00 sec)
+
+mysql> select * from accounts;
++--------+----------+--------+------------+----------+-----------+
+| acc_no | branchID | custID | date_open  | acc_type | balance   |
++--------+----------+--------+------------+----------+-----------+
+| A10001 | B100     | C101   | 10-12-2020 | S        |  67000.00 |
+| A10002 | B100     | C102   | 31-01-2019 | C        |  98000.00 |
+| A10003 | B100     | C103   | 05-08-2022 | S        | 108000.00 |
++--------+----------+--------+------------+----------+-----------+
+3 rows in set (0.00 sec)
+
+mysql> alter table customers modify email_id varchar(20);
+Query OK, 3 rows affected (0.07 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> alter table customers modify email_id varchar(20) not null;
+Query OK, 0 rows affected (0.09 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> select count(*) as total_customers from customers c
+    -> join accounts a on c.custID=a.custID
+    -> where a.balance>70000.00;
++-----------------+
+| total_customers |
++-----------------+
+|               2 |
++-----------------+
+1 row in set (0.00 sec)
+
+mysql> select avg(balance) as avg_balance
+    -> from accounts
+    -> where acc_type='S';
++--------------+
+| avg_balance  |
++--------------+
+| 87500.000000 |
++--------------+
+1 row in set (0.03 sec)
+
+mysql> select * from customers
+    -> where cust_addr like '%Pune%' or name like 'a%';
++--------+---------------+-----------+----------+------------------+------+
+| custID | name          | cust_addr | phn_no   | email_id         | age  |
++--------+---------------+-----------+----------+------------------+------+
+| C101   | Namrata Ahuja | Pune      |  8368929 | nam@gmail.com    |   20 |
+| C102   | Anant Garg    | Mumbai    | 82838742 | anantg@gmail.com |   22 |
++--------+---------------+-----------+----------+------------------+------+
+2 rows in set (0.03 sec)
+
+mysql> create table saving_account as
+    -> select acc_no,branchID,custID,date_open,balance from accounts
+    -> where acc_type='S';
+Query OK, 2 rows affected (0.02 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> select * from saving_account;
++--------+----------+--------+------------+-----------+
+| acc_no | branchID | custID | date_open  | balance   |
++--------+----------+--------+------------+-----------+
+| A10001 | B100     | C101   | 10-12-2020 |  67000.00 |
+| A10003 | B100     | C103   | 05-08-2022 | 108000.00 |
++--------+----------+--------+------------+-----------+
+2 rows in set (0.00 sec)
+
+mysql> select c.*,a.balance
+    -> from customers c
+    -> join accounts a on c.custID=a.custID
+    -> where a.balance>=70000.00
+    -> order by c.age;
++--------+-------------+-----------+----------+------------------+------+-----------+
+| custID | name        | cust_addr | phn_no   | email_id         | age  | balance   |
++--------+-------------+-----------+----------+------------------+------+-----------+
+| C102   | Anant Garg  | Mumbai    | 82838742 | anantg@gmail.com |   22 |  98000.00 |
+| C103   | Unnati Jain | Delhi     | 90377281 | unnj@gmail.com   |   25 | 108000.00 |
++--------+-------------+-----------+----------+------------------+------+-----------+
+2 rows in set (0.00 sec)
+
+mysql>

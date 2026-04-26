@@ -1,0 +1,52 @@
+mysql> create view saving_acc as
+    -> select c.*,a.acc_no,a.date_open,a.balance
+    -> from customers c join accounts a on c.custID=a.custID
+    -> where a.date_open='2018-08-16' and a.acc_type='S';
+Query OK, 0 rows affected (0.04 sec)
+
+//similar for loan acc
+
+mysql> update customers set cust_addr='Pune' where custID='C103';
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from customers
+    -> ;
++--------+---------------+-----------+----------+------+----------+
+| custID | name          | cust_addr | phn_no   | age  | email_id |
++--------+---------------+-----------+----------+------+----------+
+| C101   | Namrata Ahuja | Pune      |  8368929 |   40 | NULL     |
+| C102   | Anant Garg    | Mumbai    | 82838742 |   22 | NULL     |
+| C103   | Unnati Jain   | Pune      | 90377281 |   25 | NULL     |
++--------+---------------+-----------+----------+------+----------+
+3 rows in set (0.00 sec)
+
+mysql> create index idx_cust_pk on customers(custID);
+Query OK, 0 rows affected (0.10 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> create index idx_branch_pk on branches(branchID);
+Query OK, 0 rows affected (0.09 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table customers modify custID varchar auto_increment;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'auto_increment' at line 1
+
+mysql> create view cust_inform as select * from branches;
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> select * from cust_inform;
++----------+-------------+----------+
+| branchID | branch_name | address  |
++----------+-------------+----------+
+| B100     | Pune Main   | FCR Pune |
++----------+-------------+----------+
+1 row in set (0.00 sec)
+
+mysql> select * from branches;
++----------+-------------+----------+
+| branchID | branch_name | address  |
++----------+-------------+----------+
+| B100     | Pune Main   | FCR Pune |
++----------+-------------+----------+
+1 row in set (0.00 sec)

@@ -1,0 +1,59 @@
+!!!ALMOST SAME SCHEMA AS PS6!!!
+
+mysql> alter table customers add email_addr varchar(30);
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table customers rename column email_addr to email_id;;
+Query OK, 0 rows affected (0.05 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> select c.*,a.balance
+    -> from customers c
+    -> join accounts a on c.custID=a.custID
+    -> where a.balance=(select max(balance) from accounts);
++--------+-------------+-----------+----------+------+----------+-----------+
+| custID | name        | cust_addr | phn_no   | age  | email_id | balance   |
++--------+-------------+-----------+----------+------+----------+-----------+
+| C103   | Unnati Jain | Delhi     | 90377281 |   25 | NULL     | 108000.00 |
++--------+-------------+-----------+----------+------+----------+-----------+
+1 row in set (0.03 sec)
+
+mysql> select c.*,a.balance
+    -> from customers c
+    -> join accounts a on c.custID=a.custID
+    -> where a.balance=(select min(balance) from accounts) AND a.acc_type='S';
++--------+---------------+-----------+---------+------+----------+----------+
+| custID | name          | cust_addr | phn_no  | age  | email_id | balance  |
++--------+---------------+-----------+---------+------+----------+----------+
+| C101   | Namrata Ahuja | Pune      | 8368929 |   20 | NULL     | 67000.00 |
++--------+---------------+-----------+---------+------+----------+----------+
+1 row in set (0.00 sec)
+
+mysql> select * from customers
+    -> where cust_addr='Pune' and age>35;
+Empty set (0.00 sec)
+
+mysql> select custID,name,age
+    -> from customers
+    -> order by age;
++--------+---------------+------+
+| custID | name          | age  |
++--------+---------------+------+
+| C101   | Namrata Ahuja |   20 |
+| C102   | Anant Garg    |   22 |
+| C103   | Unnati Jain   |   25 |
++--------+---------------+------+
+3 rows in set (0.00 sec)
+
+mysql> select c.name,a.branchID,a.acc_type
+    -> from customers c
+    -> join accounts a on c.custID=a.custID
+    -> group by c.name,a.branchID,a.acc_type;
++---------------+----------+----------+
+| name          | branchID | acc_type |
++---------------+----------+----------+
+| Namrata Ahuja | B100     | S        |
+| Anant Garg    | B100     | C        |
+| Unnati Jain   | B100     | S        |
++---------------+----------+----------+

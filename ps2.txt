@@ -1,0 +1,69 @@
+ps2>
+
+ps2> db.Movies_Data.insertMany([
+|   {Movie_ID:1, Movie_Name:"RRR", Director:"Rajamouli",
+|    Genre:"Action", BoxOfficeCollection:1200},
+|   {Movie_ID:2, Movie_Name:"Pushpa", Director:"Sukumar",
+|    Genre:"Action", BoxOfficeCollection:365},
+|   {Movie_ID:3, Movie_Name:"Gangubai", Director:"Bhansali",
+|    Genre:"Drama", BoxOfficeCollection:209},
+|   {Movie_ID:4, Movie_Name:"Brahmastra", Director:"Ayan",
+|    Genre:"Fantasy", BoxOfficeCollection:431},
+|   {Movie_ID:5, Movie_Name:"KGF2", Director:"Prashanth",
+|    Genre:"Action", BoxOfficeCollection:1200},
+| ]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('69ee41dab2bcfee4923682e5'),
+    '1': ObjectId('69ee41dab2bcfee4923682e6'),
+    '2': ObjectId('69ee41dab2bcfee4923682e7'),
+    '3': ObjectId('69ee41dab2bcfee4923682e8'),
+    '4': ObjectId('69ee41dab2bcfee4923682e9')
+  }
+}
+ps2> db.Movies_Data.aggregate([
+|   { $group: { _id: "$Director", total_movies: { $sum: 1 } } }
+| ])
+[
+  { _id: 'Sukumar', total_movies: 1 },
+  { _id: 'Rajamouli', total_movies: 1 },
+  { _id: 'Bhansali', total_movies: 1 },
+  { _id: 'Prashanth', total_movies: 1 },
+  { _id: 'Ayan', total_movies: 1 }
+]
+ps2> db.Movies_Data.aggregate([
+|   { $sort: { BoxOfficeCollection: -1 } },
+|   { $group: {
+|     _id: "$Genre",
+|     top_movie: { $first: "$Movie_Name" },
+|     max_collection: { $first: "$BoxOfficeCollection" }
+|   }}
+| ])
+[
+  { _id: 'Fantasy', top_movie: 'Brahmastra', max_collection: 431 },
+  { _id: 'Action', top_movie: 'RRR', max_collection: 1200 },
+  { _id: 'Drama', top_movie: 'Gangubai', max_collection: 209 }
+]
+ps2> db.Movies_Data.aggregate([
+|   { $sort: { BoxOfficeCollection: -1 } },
+|   { $group: {
+|     _id: "$Genre",
+|     top_movie: { $first: "$Movie_Name" },
+|     max_collection: { $first: "$BoxOfficeCollection" }
+|   }},
+|   { $sort: { max_collection: 1 } }
+| ])
+[
+  { _id: 'Drama', top_movie: 'Gangubai', max_collection: 209 },
+  { _id: 'Fantasy', top_movie: 'Brahmastra', max_collection: 431 },
+  { _id: 'Action', top_movie: 'RRR', max_collection: 1200 }
+]
+ps2> db.Movies_Data.createIndex({Movie_ID:1})
+Movie_ID_1
+ps2> db.Movies_Data.createIndex({Movie_ID:1,Director:1})
+Movie_ID_1_Director_1
+ps2> db.Movies_Data.dropIndex({Movie_ID:1})
+{ nIndexesWas: 3, ok: 1 }
+ps2> db.Movies_Data.dropIndex({Movie_ID:1,Director:1})
+{ nIndexesWas: 2, ok: 1 }

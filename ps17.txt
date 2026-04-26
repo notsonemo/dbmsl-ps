@@ -1,0 +1,241 @@
+ps17> db.student.insertMany([
+| {roll:1,name:"namrata",class:"SE",marks:75,addr:"pune",courses:["TOC","OS","DBMS"]},
+|  {roll:2,name:"vedant",class:"SE",marks:45,addr:"pune",courses:["OS","DSA"]},
+|  {roll:3,name:"krutika",class:"TE",marks:85,addr:"mumbai",courses:["TOC","OOPS"]},
+|  {roll:4,name:"anant",class:"SE",marks:97,addr:"nashik",courses:["TOC","IOT","OOPS"]},
+|  {roll:5,name:"unnati",class:"SE",marks:75,addr:"pune",courses:["OOPS"]},
+|  {roll:6,name:"jyot",class:"TE",marks:55,addr:"mumbai",courses:["IOT"]},
+|  {roll:7,name:"aryan",class:"TE",marks:15,addr:"nagpur",courses:["TOC","DBMS"]},
+|  {roll:8,name:"ayush",class:"BE",marks:65,addr:"hyderabad",courses:["OS","DSA"]},
+|  {roll:9,name:"aami",class:"SE",marks:78,addr:"ahmedabad",courses:["OS","DBMS"]},
+|  {roll:10,name:"honey",class:"BE",marks:39,addr:"pune",courses:["TOC","OS"]} ]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('69ee3155b2bcfee4923682db'),
+    '1': ObjectId('69ee3155b2bcfee4923682dc'),
+    '2': ObjectId('69ee3155b2bcfee4923682dd'),
+    '3': ObjectId('69ee3155b2bcfee4923682de'),
+    '4': ObjectId('69ee3155b2bcfee4923682df'),
+    '5': ObjectId('69ee3155b2bcfee4923682e0'),
+    '6': ObjectId('69ee3155b2bcfee4923682e1'),
+    '7': ObjectId('69ee3155b2bcfee4923682e2'),
+    '8': ObjectId('69ee3155b2bcfee4923682e3'),
+    '9': ObjectId('69ee3155b2bcfee4923682e4')
+  }
+}
+ps17> db.student.find({courses:{$all:["DBMS","TOC"]}
+| },{name:1,_id:0})
+[ { name: 'namrata' }, { name: 'aryan' } ]
+
+ps17> db.student.find(
+| {$or:[{marks:{$gt:50}},{class:"TE"}]},
+| {roll:1,class:1,_id:0})
+[
+  { roll: 1, class: 'SE' },
+  { roll: 3, class: 'TE' },
+  { roll: 4, class: 'SE' },
+  { roll: 5, class: 'SE' },
+  { roll: 6, class: 'TE' },
+  { roll: 7, class: 'TE' },
+  { roll: 8, class: 'BE' },
+  { roll: 9, class: 'SE' }
+]
+
+ps17> db.student.replaceOne(
+| {roll:10},{roll:10,name:"sneha",class:"TE",marks:89,addr:"nagpur",courses:["DBMS","IOT","OS"]})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+ps17> db.student.find().pretty()
+[
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682db'),
+    roll: 1,
+    name: 'namrata',
+    class: 'SE',
+    marks: 75,
+    addr: 'pune',
+    courses: [ 'TOC', 'OS', 'DBMS' ]
+  },
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682dc'),
+    roll: 2,
+    name: 'vedant',
+    class: 'SE',
+    marks: 45,
+    addr: 'pune',
+    courses: [ 'OS', 'DSA' ]
+  },
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682dd'),
+    roll: 3,
+    name: 'krutika',
+    class: 'TE',
+    marks: 85,
+    addr: 'mumbai',
+    courses: [ 'TOC', 'OOPS' ]
+  },
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682de'),
+    roll: 4,
+    name: 'anant',
+    class: 'SE',
+    marks: 97,
+    addr: 'nashik',
+    courses: [ 'TOC', 'IOT', 'OOPS' ]
+  },
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682df'),
+    roll: 5,
+    name: 'unnati',
+    class: 'SE',
+    marks: 75,
+    addr: 'pune',
+    courses: [ 'OOPS' ]
+  },
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682e0'),
+    roll: 6,
+    name: 'jyot',
+    class: 'TE',
+    marks: 55,
+    addr: 'mumbai',
+    courses: [ 'IOT' ]
+  },
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682e1'),
+    roll: 7,
+    name: 'aryan',
+    class: 'TE',
+    marks: 15,
+    addr: 'nagpur',
+    courses: [ 'TOC', 'DBMS' ]
+  },
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682e2'),
+    roll: 8,
+    name: 'ayush',
+    class: 'BE',
+    marks: 65,
+    addr: 'hyderabad',
+    courses: [ 'OS', 'DSA' ]
+  },
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682e3'),
+    roll: 9,
+    name: 'aami',
+    class: 'SE',
+    marks: 78,
+    addr: 'ahmedabad',
+    courses: [ 'OS', 'DBMS' ]
+  },
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682e4'),
+    roll: 10,
+    name: 'sneha',
+    class: 'TE',
+    marks: 89,
+    addr: 'nagpur',
+    courses: [ 'DBMS', 'IOT', 'OS' ]
+  }
+]
+ps17> db.student.find().sort({Marks:-1}).skip(2).limit(2)
+[
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682db'),
+    roll: 1,
+    name: 'namrata',
+    class: 'SE',
+    marks: 75,
+    addr: 'pune',
+    courses: [ 'TOC', 'OS', 'DBMS' ]
+  },
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682dd'),
+    roll: 3,
+    name: 'krutika',
+    class: 'TE',
+    marks: 85,
+    addr: 'mumbai',
+    courses: [ 'TOC', 'OOPS' ]
+  }
+]
+
+ps17> db.student.deleteMany({marks:{$lt:50}})
+{ acknowledged: true, deletedCount: 2 }
+
+ps17> db.student.deleteOne({})
+{ acknowledged: true, deletedCount: 1 }
+ps17> db.student.find().pretty()
+[
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682dd'),
+    roll: 3,
+    name: 'krutika',
+    class: 'TE',
+    marks: 85,
+    addr: 'mumbai',
+    courses: [ 'TOC', 'OOPS' ]
+  },
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682de'),
+    roll: 4,
+    name: 'anant',
+    class: 'SE',
+    marks: 97,
+    addr: 'nashik',
+    courses: [ 'TOC', 'IOT', 'OOPS' ]
+  },
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682df'),
+    roll: 5,
+    name: 'unnati',
+    class: 'SE',
+    marks: 75,
+    addr: 'pune',
+    courses: [ 'OOPS' ]
+  },
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682e0'),
+    roll: 6,
+    name: 'jyot',
+    class: 'TE',
+    marks: 55,
+    addr: 'mumbai',
+    courses: [ 'IOT' ]
+  },
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682e2'),
+    roll: 8,
+    name: 'ayush',
+    class: 'BE',
+    marks: 65,
+    addr: 'hyderabad',
+    courses: [ 'OS', 'DSA' ]
+  },
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682e3'),
+    roll: 9,
+    name: 'aami',
+    class: 'SE',
+    marks: 78,
+    addr: 'ahmedabad',
+    courses: [ 'OS', 'DBMS' ]
+  },
+  {
+    _id: ObjectId('69ee3155b2bcfee4923682e4'),
+    roll: 10,
+    name: 'sneha',
+    class: 'TE',
+    marks: 89,
+    addr: 'nagpur',
+    courses: [ 'DBMS', 'IOT', 'OS' ]
+  }
+]
+ps17>

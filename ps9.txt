@@ -1,0 +1,316 @@
+ps6> db.Social_Media.insertMany([
+|   {User_Id:1, User_Name:"Riya", No_of_Posts:150, No_of_Friends:8, Friends_List:["Amit","Priya"], Interests:["Music","Travel"]},
+|   {User_Id:2, User_Name:"Karan", No_of_Posts:80, No_of_Friends:4, Friends_List:["Riya","Neha"], Interests:["Cricket","Gaming"]},
+|   {User_Id:3, User_Name:"Neha", No_of_Posts:210, No_of_Friends:12, Friends_List:["Karan","Riya","Vivek"], Interests:["Cooking","Yoga"]},
+|   {User_Id:4, User_Name:"Nimo", No_of_Posts:150, No_of_Friends:6, Friends_List:["Amit","Riya"], Interests:["Art","Travel"]},
+|   {User_Id:5, User_Name:"Namrata", No_of_Posts:80, No_of_Friends:4, Friends_List:["Riya","Nimo"], Interests:["Reading","Gaming"]},
+|   {User_Id:6, User_Name:"Anant", No_of_Posts:210, No_of_Friends:12, Friends_List:["Karan","Nimo","Vivek"], Interests:["Cooking","Travel"]},
+|   {User_Id:7, User_Name:"Unnati", No_of_Posts:190, No_of_Friends:8, Friends_List:["Anant","Namrata"], Interests:["Music","Travel"]},
+|   {User_Id:8, User_Name:"Shruti", No_of_Posts:800, No_of_Friends:4, Friends_List:["Karan","Nimo"], Interests:["Travel","Reading"]},
+|   {User_Id:9, User_Name:"Aditi", No_of_Posts:110, No_of_Friends:12, Friends_List:["Karan","Riya","Vivek"], Interests:["Cooking","Trekking"]},
+|   {User_Id:10, User_Name:"Jyot", No_of_Posts:130, No_of_Friends:20, Friends_List:["Namrata","Anant"], Interests:["Cooking","Talking"]}
+| ]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('69ee296fb2bcfee4923682d1'),
+    '1': ObjectId('69ee296fb2bcfee4923682d2'),
+    '2': ObjectId('69ee296fb2bcfee4923682d3'),
+    '3': ObjectId('69ee296fb2bcfee4923682d4'),
+    '4': ObjectId('69ee296fb2bcfee4923682d5'),
+    '5': ObjectId('69ee296fb2bcfee4923682d6'),
+    '6': ObjectId('69ee296fb2bcfee4923682d7'),
+    '7': ObjectId('69ee296fb2bcfee4923682d8'),
+    '8': ObjectId('69ee296fb2bcfee4923682d9'),
+    '9': ObjectId('69ee296fb2bcfee4923682da')
+  }
+}
+ps6> db.Social_Media.find().pretty()
+[
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d1'),
+    User_Id: 1,
+    User_Name: 'Riya',
+    No_of_Posts: 150,
+    No_of_Friends: 8,
+    Friends_List: [ 'Amit', 'Priya' ],
+    Interests: [ 'Music', 'Travel' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d2'),
+    User_Id: 2,
+    User_Name: 'Karan',
+    No_of_Posts: 80,
+    No_of_Friends: 4,
+    Friends_List: [ 'Riya', 'Neha' ],
+    Interests: [ 'Cricket', 'Gaming' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d3'),
+    User_Id: 3,
+    User_Name: 'Neha',
+    No_of_Posts: 210,
+    No_of_Friends: 12,
+    Friends_List: [ 'Karan', 'Riya', 'Vivek' ],
+    Interests: [ 'Cooking', 'Yoga' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d4'),
+    User_Id: 4,
+    User_Name: 'Nimo',
+    No_of_Posts: 150,
+    No_of_Friends: 6,
+    Friends_List: [ 'Amit', 'Riya' ],
+    Interests: [ 'Art', 'Travel' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d5'),
+    User_Id: 5,
+    User_Name: 'Namrata',
+    No_of_Posts: 80,
+    No_of_Friends: 4,
+    Friends_List: [ 'Riya', 'Nimo' ],
+    Interests: [ 'Reading', 'Gaming' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d6'),
+    User_Id: 6,
+    User_Name: 'Anant',
+    No_of_Posts: 210,
+    No_of_Friends: 12,
+    Friends_List: [ 'Karan', 'Nimo', 'Vivek' ],
+    Interests: [ 'Cooking', 'Travel' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d7'),
+    User_Id: 7,
+    User_Name: 'Unnati',
+    No_of_Posts: 190,
+    No_of_Friends: 8,
+    Friends_List: [ 'Anant', 'Namrata' ],
+    Interests: [ 'Music', 'Travel' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d8'),
+    User_Id: 8,
+    User_Name: 'Shruti',
+    No_of_Posts: 800,
+    No_of_Friends: 4,
+    Friends_List: [ 'Karan', 'Nimo' ],
+    Interests: [ 'Travel', 'Reading' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d9'),
+    User_Id: 9,
+    User_Name: 'Aditi',
+    No_of_Posts: 110,
+    No_of_Friends: 12,
+    Friends_List: [ 'Karan', 'Riya', 'Vivek' ],
+    Interests: [ 'Cooking', 'Trekking' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682da'),
+    User_Id: 10,
+    User_Name: 'Jyot',
+    No_of_Posts: 130,
+    No_of_Friends: 20,
+    Friends_List: [ 'Namrata', 'Anant' ],
+    Interests: [ 'Cooking', 'Talking' ]
+  }
+]
+ps6> db.Social_Media.find({No_of_Posts:{$gt:100}})
+[
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d1'),
+    User_Id: 1,
+    User_Name: 'Riya',
+    No_of_Posts: 150,
+    No_of_Friends: 8,
+    Friends_List: [ 'Amit', 'Priya' ],
+    Interests: [ 'Music', 'Travel' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d3'),
+    User_Id: 3,
+    User_Name: 'Neha',
+    No_of_Posts: 210,
+    No_of_Friends: 12,
+    Friends_List: [ 'Karan', 'Riya', 'Vivek' ],
+    Interests: [ 'Cooking', 'Yoga' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d4'),
+    User_Id: 4,
+    User_Name: 'Nimo',
+    No_of_Posts: 150,
+    No_of_Friends: 6,
+    Friends_List: [ 'Amit', 'Riya' ],
+    Interests: [ 'Art', 'Travel' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d6'),
+    User_Id: 6,
+    User_Name: 'Anant',
+    No_of_Posts: 210,
+    No_of_Friends: 12,
+    Friends_List: [ 'Karan', 'Nimo', 'Vivek' ],
+    Interests: [ 'Cooking', 'Travel' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d7'),
+    User_Id: 7,
+    User_Name: 'Unnati',
+    No_of_Posts: 190,
+    No_of_Friends: 8,
+    Friends_List: [ 'Anant', 'Namrata' ],
+    Interests: [ 'Music', 'Travel' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d8'),
+    User_Id: 8,
+    User_Name: 'Shruti',
+    No_of_Posts: 800,
+    No_of_Friends: 4,
+    Friends_List: [ 'Karan', 'Nimo' ],
+    Interests: [ 'Travel', 'Reading' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d9'),
+    User_Id: 9,
+    User_Name: 'Aditi',
+    No_of_Posts: 110,
+    No_of_Friends: 12,
+    Friends_List: [ 'Karan', 'Riya', 'Vivek' ],
+    Interests: [ 'Cooking', 'Trekking' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682da'),
+    User_Id: 10,
+    User_Name: 'Jyot',
+    No_of_Posts: 130,
+    No_of_Friends: 20,
+    Friends_List: [ 'Namrata', 'Anant' ],
+    Interests: [ 'Cooking', 'Talking' ]
+  }
+]
+
+
+ps6> db.Social_Media.find({},{User_Id:1,Friends_List:1,_id:0})
+[
+  { User_Id: 1, Friends_List: [ 'Amit', 'Priya' ] },
+  { User_Id: 2, Friends_List: [ 'Riya', 'Neha' ] },
+  { User_Id: 3, Friends_List: [ 'Karan', 'Riya', 'Vivek' ] },
+  { User_Id: 4, Friends_List: [ 'Amit', 'Riya' ] },
+  { User_Id: 5, Friends_List: [ 'Riya', 'Nimo' ] },
+  { User_Id: 6, Friends_List: [ 'Karan', 'Nimo', 'Vivek' ] },
+  { User_Id: 7, Friends_List: [ 'Anant', 'Namrata' ] },
+  { User_Id: 8, Friends_List: [ 'Karan', 'Nimo' ] },
+  { User_Id: 9, Friends_List: [ 'Karan', 'Riya', 'Vivek' ] },
+  { User_Id: 10, Friends_List: [ 'Namrata', 'Anant' ] }
+]
+
+ps6> db.Social_Media.find( {No_of_Friends:{$gt:5}},{User_Id:1,Friends_List:1,_id:0})
+[
+  { User_Id: 1, Friends_List: [ 'Amit', 'Priya' ] },
+  { User_Id: 3, Friends_List: [ 'Karan', 'Riya', 'Vivek' ] },
+  { User_Id: 4, Friends_List: [ 'Amit', 'Riya' ] },
+  { User_Id: 6, Friends_List: [ 'Karan', 'Nimo', 'Vivek' ] },
+  { User_Id: 7, Friends_List: [ 'Anant', 'Namrata' ] },
+  { User_Id: 9, Friends_List: [ 'Karan', 'Riya', 'Vivek' ] },
+  { User_Id: 10, Friends_List: [ 'Namrata', 'Anant' ] }
+]
+
+ps6> db.Social_Media.find().sort({No_of_Posts:-1})
+[
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d8'),
+    User_Id: 8,
+    User_Name: 'Shruti',
+    No_of_Posts: 800,
+    No_of_Friends: 4,
+    Friends_List: [ 'Karan', 'Nimo' ],
+    Interests: [ 'Travel', 'Reading' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d3'),
+    User_Id: 3,
+    User_Name: 'Neha',
+    No_of_Posts: 210,
+    No_of_Friends: 12,
+    Friends_List: [ 'Karan', 'Riya', 'Vivek' ],
+    Interests: [ 'Cooking', 'Yoga' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d6'),
+    User_Id: 6,
+    User_Name: 'Anant',
+    No_of_Posts: 210,
+    No_of_Friends: 12,
+    Friends_List: [ 'Karan', 'Nimo', 'Vivek' ],
+    Interests: [ 'Cooking', 'Travel' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d7'),
+    User_Id: 7,
+    User_Name: 'Unnati',
+    No_of_Posts: 190,
+    No_of_Friends: 8,
+    Friends_List: [ 'Anant', 'Namrata' ],
+    Interests: [ 'Music', 'Travel' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d1'),
+    User_Id: 1,
+    User_Name: 'Riya',
+    No_of_Posts: 150,
+    No_of_Friends: 8,
+    Friends_List: [ 'Amit', 'Priya' ],
+    Interests: [ 'Music', 'Travel' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d4'),
+    User_Id: 4,
+    User_Name: 'Nimo',
+    No_of_Posts: 150,
+    No_of_Friends: 6,
+    Friends_List: [ 'Amit', 'Riya' ],
+    Interests: [ 'Art', 'Travel' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682da'),
+    User_Id: 10,
+    User_Name: 'Jyot',
+    No_of_Posts: 130,
+    No_of_Friends: 20,
+    Friends_List: [ 'Namrata', 'Anant' ],
+    Interests: [ 'Cooking', 'Talking' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d9'),
+    User_Id: 9,
+    User_Name: 'Aditi',
+    No_of_Posts: 110,
+    No_of_Friends: 12,
+    Friends_List: [ 'Karan', 'Riya', 'Vivek' ],
+    Interests: [ 'Cooking', 'Trekking' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d2'),
+    User_Id: 2,
+    User_Name: 'Karan',
+    No_of_Posts: 80,
+    No_of_Friends: 4,
+    Friends_List: [ 'Riya', 'Neha' ],
+    Interests: [ 'Cricket', 'Gaming' ]
+  },
+  {
+    _id: ObjectId('69ee296fb2bcfee4923682d5'),
+    User_Id: 5,
+    User_Name: 'Namrata',
+    No_of_Posts: 80,
+    No_of_Friends: 4,
+    Friends_List: [ 'Riya', 'Nimo' ],
+    Interests: [ 'Reading', 'Gaming' ]
+  }
+]
+ps6>

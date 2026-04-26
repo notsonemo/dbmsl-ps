@@ -1,0 +1,87 @@
+ps14> db.student_data.insertMany([ {id:101,name:"namrata",dept:"CE",marks:75}, {id:102,name:"anant",dept:"ETC",marks:98}, {id:103,name:"aditi",dept:"CE",marks:88}, {id:104,name:"om",dept:"IT",marks:70}, {id:105,name:"unnati",dept:"ETC",marks:99}, {id:106,name:"jyot",dept:"IT",marks:86}, {id:107,name:"deep",dept:"CE",marks:34}, {id:108,name:"shruti",dept:"ETC",marks:88}]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('69ee5400f436f86a0c3682d1'),
+    '1': ObjectId('69ee5400f436f86a0c3682d2'),
+    '2': ObjectId('69ee5400f436f86a0c3682d3'),
+    '3': ObjectId('69ee5400f436f86a0c3682d4'),
+    '4': ObjectId('69ee5400f436f86a0c3682d5'),
+    '5': ObjectId('69ee5400f436f86a0c3682d6'),
+    '6': ObjectId('69ee5400f436f86a0c3682d7'),
+    '7': ObjectId('69ee5400f436f86a0c3682d8')
+  }
+}
+
+ps14> db.student_data.aggregate([ {$group:{_id:"$dept",avg_marks:{$avg:"$marks"},students:{$push:{id:"$id",name:"$name",marks:"$marks"}}}}])
+[
+  {
+    _id: 'ETC',
+    avg_marks: 95,
+    students: [
+      { id: 102, name: 'anant', marks: 98 },
+      { id: 105, name: 'unnati', marks: 99 },
+      { id: 108, name: 'shruti', marks: 88 }
+    ]
+  },
+  {
+    _id: 'CE',
+    avg_marks: 65.66666666666667,
+    students: [
+      { id: 101, name: 'namrata', marks: 75 },
+      { id: 103, name: 'aditi', marks: 88 },
+      { id: 107, name: 'deep', marks: 34 }
+    ]
+  },
+  {
+    _id: 'IT',
+    avg_marks: 78,
+    students: [
+      { id: 104, name: 'om', marks: 70 },
+      { id: 106, name: 'jyot', marks: 86 }
+    ]
+  }
+]
+ps14> db.student_data.aggregate([ { $group: { _id: "$dept", count: { $sum: 1 } } }])
+[
+  { _id: 'ETC', count: 3 },
+  { _id: 'CE', count: 3 },
+  { _id: 'IT', count: 2 }
+]
+
+ps14> db.student_data.aggregate([
+| {$group:{_id:"$dept",count:{$sum:1} }} ])
+[
+  { _id: 'IT', count: 2 },
+  { _id: 'CE', count: 3 },
+  { _id: 'ETC', count: 3 }
+]
+
+ps14> db.student_data.aggregate([
+| {$sort:{marks:-1}},
+| {$group:{
+| _id:"$dept",
+| top_student:{$first:"$name"},
+| max_marks:{$first:"$marks"}
+| }},
+| {$sort:{max_marks:-1}}
+| ])
+[
+  { _id: 'ETC', top_student: 'unnati', max_marks: 99 },
+  { _id: 'CE', top_student: 'aditi', max_marks: 88 },
+  { _id: 'IT', top_student: 'jyot', max_marks: 86 }
+]
+
+ps14> db.student_data.createIndex({id:1})
+id_1
+
+ps14> db.student_data.createIndex({namw:1,dept:1})
+namw_1_dept_1
+
+ps14> db.student_data.dropIndex({namw:1,dept:1})
+{ nIndexesWas: 3, ok: 1 }
+
+ps14> db.student_data.dropIndex({id:1})
+{ nIndexesWas: 2, ok: 1 }
+
+ps14>

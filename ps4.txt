@@ -1,0 +1,347 @@
+mysql> create database ps4_11;
+Query OK, 1 row affected (0.04 sec)
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| ps4_11             |
+| ps6                |
+| sakila             |
+| sys                |
+| world              |
++--------------------+
+8 rows in set (0.00 sec)
+
+mysql> use database ps4_11;
+ERROR 1049 (42000): Unknown database 'database'
+mysql> use ps4_11;
+Database changed
+mysql>
+mysql> create table manager(manager_id,manager_name);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ',manager_name)' at line 1
+mysql> create table manager(manager_id varchar(10) PRIMARY KEY,manager_name varchar(30));
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> create table locations(location_id varchar(10) PRIMARY KEY,street_address varchar(20),postal_code varchar(8),city varchar(20), country_id varchar(10));
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> create table departments(dept_id varchar(10) PRIMARY KEY, dept_name varchar(20), manager_id varchar(10),location_id varchar(10), FOREIGN KEY manager_id REFERENCES manager(manager_id), foreign key location_id references locations(location_id));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'REFERENCES manager(manager_id), foreign key location_id references locations(loc' at line 1
+mysql> create table departments(dept_id varchar(10) PRIMARY KEY, dept_name varchar(20), manager_id varchar(10),location_id varchar(10), FOREIGN KEY (manager_id) REFERENCES manager(manager_id), foreign key (location_id) references locations(location_id));
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> create table employee (
+    -> employee_id varchar(10) primary key,
+    -> first_name varchar(20),
+    -> last_name varchar(20),
+    -> hire_date varchar(10),
+    -> salary decimal(10,2),
+    -> job_title varchar(10)
+    -> , manager_id varchar(10),
+    -> department_id varchar(10),
+    -> foreign key (manager_id) references manager(manager_id),
+    -> foreign key (department_id) references departments(dept_id)
+    -> );
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> create table employees (
+    -> employee_id varchar(10) primary key,
+    -> first_name varchar(20),
+    -> last_name varchar(20),
+    -> hire_date varchar(10),
+    -> salary decimal(10,2),
+    -> job_title varchar(10),
+    -> manager_id varchar(10),
+    -> dept_id varchar(10),
+    -> foreign key (manager_id) references manager(manager_id),
+    -> foreign key (dept_id) references departments(dept_id)
+    -> );
+Query OK, 0 rows affected (0.11 sec)
+
+mysql> drop table employee;
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> show tables;
++------------------+
+| Tables_in_ps4_11 |
++------------------+
+| departments      |
+| employees        |
+| locations        |
+| manager          |
++------------------+
+4 rows in set (0.00 sec)
+
+mysql> describe employees;
++-------------+---------------+------+-----+---------+-------+
+| Field       | Type          | Null | Key | Default | Extra |
++-------------+---------------+------+-----+---------+-------+
+| employee_id | varchar(10)   | NO   | PRI | NULL    |       |
+| first_name  | varchar(20)   | YES  |     | NULL    |       |
+| last_name   | varchar(20)   | YES  |     | NULL    |       |
+| hire_date   | varchar(10)   | YES  |     | NULL    |       |
+| salary      | decimal(10,2) | YES  |     | NULL    |       |
+| job_title   | varchar(10)   | YES  |     | NULL    |       |
+| manager_id  | varchar(10)   | YES  | MUL | NULL    |       |
+| dept_id     | varchar(10)   | YES  | MUL | NULL    |       |
++-------------+---------------+------+-----+---------+-------+
+8 rows in set (0.04 sec)
+
+mysql> describe departments;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| dept_id     | varchar(10) | NO   | PRI | NULL    |       |
+| dept_name   | varchar(20) | YES  |     | NULL    |       |
+| manager_id  | varchar(10) | YES  | MUL | NULL    |       |
+| location_id | varchar(10) | YES  | MUL | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> describe departments;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| dept_id     | varchar(10) | NO   | PRI | NULL    |       |
+| dept_name   | varchar(20) | YES  |     | NULL    |       |
+| manager_id  | varchar(10) | YES  | MUL | NULL    |       |
+| location_id | varchar(10) | YES  | MUL | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> describe manager;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| manager_id   | varchar(10) | NO   | PRI | NULL    |       |
+| manager_name | varchar(30) | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> insert into manager values(('M101','Varsha Ahuja'),('M102','Trilok Ahuja'));
+ERROR 1241 (21000): Operand should contain 1 column(s)
+mysql> insert into manager values('M101','Varsha Ahuja');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into manager values('M102','Trilok Ahuja');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> describe locations
+    -> ;
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| location_id    | varchar(10) | NO   | PRI | NULL    |       |
+| street_address | varchar(20) | YES  |     | NULL    |       |
+| postal_code    | varchar(8)  | YES  |     | NULL    |       |
+| city           | varchar(20) | YES  |     | NULL    |       |
+| country_id     | varchar(10) | YES  |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> insert into locations values('L001','FC Road','P41011','Pune','IN251');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into departments values('D101','Finance','M102','L001');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into departments values('D102','IT','M102','L001');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into departments values('D103','HR','M101','L001');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into departments values('D104','Support','M101','L001');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> select * from departments;
++---------+-----------+------------+-------------+
+| dept_id | dept_name | manager_id | location_id |
++---------+-----------+------------+-------------+
+| D101    | Finance   | M102       | L001        |
+| D102    | IT        | M102       | L001        |
+| D103    | HR        | M101       | L001        |
+| D104    | Support   | M101       | L001        |
++---------+-----------+------------+-------------+
+4 rows in set (0.00 sec)
+
+mysql> select * from manager;
++------------+--------------+
+| manager_id | manager_name |
++------------+--------------+
+| M101       | Varsha Ahuja |
+| M102       | Trilok Ahuja |
++------------+--------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from locations;
++-------------+----------------+-------------+------+------------+
+| location_id | street_address | postal_code | city | country_id |
++-------------+----------------+-------------+------+------------+
+| L001        | FC Road        | P41011      | Pune | IN251      |
++-------------+----------------+-------------+------+------------+
+1 row in set (0.00 sec)
+
+mysql> insert into employees values
+    -> ('E101','Namrata','Ahuja','01-12-2023','50000.00','Analyst','M102','D102'),
+    -> ('E102','Riya','Dhanwani','01-04-2019','80000.00','Sales Rep','M102','D101'),
+    -> ('E103','Vanshika','Morwani','01-04-2021','40000.00','HR lead','M101','D103'),
+    -> ('E104','Saumya','Morwani','01-04-2015','50000.00','support','M101','D104');
+Query OK, 4 rows affected (0.04 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO departments VALUES('D105','Sales','M101','L001');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> INSERT INTO employees VALUES
+    -> ('E001','Amit','Sharma','2008-06-15',55000,'Analyst','M101','D102'),
+    -> ('E002','Priya','Mehta','2012-03-20',45000,'Developer','M102','D102'),
+    -> ('E003','Rahul','Singh','2005-01-10',70000,'Manager','M101','D101'),
+    -> ('E004','Sneha','Joshi','2018-07-22',35000,'Clerk','M102','D103'),
+    -> ('E005','Vikram','Patil','2003-11-05',90000,'Director','M101','D101'),
+    -> ('E006','Neha','Kulkarni','2015-09-13',48000,'Tester','M102','D102'),
+    -> ('E007','Arjun','Desai','2007-04-18',62000,'Engineer','M101','D104'),
+    -> ('E008','Pooja','Nair','2019-02-28',32000,'HR Lead','M102','D103'),
+    -> ('E009','Rohan','Verma','2010-08-30',75000,'Designer','M101','D105'),
+    -> ('E010','Jones','Williams','2006-03-12',68000,'Manager','M102','D101');
+Query OK, 10 rows affected (0.03 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> select * from employees;
++-------------+------------+-----------+------------+----------+-----------+------------+---------+
+| employee_id | first_name | last_name | hire_date  | salary   | job_title | manager_id | dept_id |
++-------------+------------+-----------+------------+----------+-----------+------------+---------+
+| E001        | Amit       | Sharma    | 2008-06-15 | 55000.00 | Analyst   | M101       | D102    |
+| E002        | Priya      | Mehta     | 2012-03-20 | 45000.00 | Developer | M102       | D102    |
+| E003        | Rahul      | Singh     | 2005-01-10 | 70000.00 | Manager   | M101       | D101    |
+| E004        | Sneha      | Joshi     | 2018-07-22 | 35000.00 | Clerk     | M102       | D103    |
+| E005        | Vikram     | Patil     | 2003-11-05 | 90000.00 | Director  | M101       | D101    |
+| E006        | Neha       | Kulkarni  | 2015-09-13 | 48000.00 | Tester    | M102       | D102    |
+| E007        | Arjun      | Desai     | 2007-04-18 | 62000.00 | Engineer  | M101       | D104    |
+| E008        | Pooja      | Nair      | 2019-02-28 | 32000.00 | HR Lead   | M102       | D103    |
+| E009        | Rohan      | Verma     | 2010-08-30 | 75000.00 | Designer  | M101       | D105    |
+| E010        | Jones      | Williams  | 2006-03-12 | 68000.00 | Manager   | M102       | D101    |
+| E101        | Namrata    | Ahuja     | 01-12-2023 | 50000.00 | Analyst   | M102       | D102    |
+| E102        | Riya       | Dhanwani  | 01-04-2019 | 80000.00 | Sales Rep | M102       | D101    |
+| E103        | Vanshika   | Morwani   | 01-04-2021 | 40000.00 | HR lead   | M101       | D103    |
+| E104        | Saumya     | Morwani   | 01-04-2015 | 50000.00 | support   | M101       | D104    |
++-------------+------------+-----------+------------+----------+-----------+------------+---------+
+14 rows in set (0.03 sec)
+
+mysql> select e.first_name,e.last_name,e.salary
+    -> from employees e
+    -> join departments d on e.dept_id=d.dept_id
+    -> and d.dept_name LIKE '%IT%';
++------------+-----------+----------+
+| first_name | last_name | salary   |
++------------+-----------+----------+
+| Amit       | Sharma    | 55000.00 |
+| Priya      | Mehta     | 45000.00 |
+| Neha       | Kulkarni  | 48000.00 |
+| Namrata    | Ahuja     | 50000.00 |
++------------+-----------+----------+
+4 rows in set (0.00 sec)
+
+mysql> select e.first_name,e.last_name,e.salary
+    -> from employees e
+    -> where e.salary=(select min(salary) from employees);
++------------+-----------+----------+
+| first_name | last_name | salary   |
++------------+-----------+----------+
+| Pooja      | Nair      | 32000.00 |
++------------+-----------+----------+
+1 row in set (0.00 sec)
+
+mysql> select e.employee_id,e.first_name,e.last_name,e.salary
+    -> from employees e
+    -> where e.salary>(select avg(e2.salary) from employees e2 where e2.dept_id=e.dept_id);
++-------------+------------+-----------+----------+
+| employee_id | first_name | last_name | salary   |
++-------------+------------+-----------+----------+
+| E001        | Amit       | Sharma    | 55000.00 |
+| E005        | Vikram     | Patil     | 90000.00 |
+| E007        | Arjun      | Desai     | 62000.00 |
+| E101        | Namrata    | Ahuja     | 50000.00 |
+| E102        | Riya       | Dhanwani  | 80000.00 |
+| E103        | Vanshika   | Morwani   | 40000.00 |
++-------------+------------+-----------+----------+
+6 rows in set (0.00 sec)
+
+mysql> select e.employee_id,e.first_name,e.last_name,e.salary,e.dept_id
+    -> from employees e
+    -> where e.salary>(select avg(e2.salary) from employees e2 where e2.dept_id=e.dept_id);
++-------------+------------+-----------+----------+---------+
+| employee_id | first_name | last_name | salary   | dept_id |
++-------------+------------+-----------+----------+---------+
+| E001        | Amit       | Sharma    | 55000.00 | D102    |
+| E005        | Vikram     | Patil     | 90000.00 | D101    |
+| E007        | Arjun      | Desai     | 62000.00 | D104    |
+| E101        | Namrata    | Ahuja     | 50000.00 | D102    |
+| E102        | Riya       | Dhanwani  | 80000.00 | D101    |
+| E103        | Vanshika   | Morwani   | 40000.00 | D103    |
++-------------+------------+-----------+----------+---------+
+6 rows in set (0.00 sec)
+
+//this this where you need to take care now usubqueries ke liye use different alias 
+mysql> select e.employee_id,e.first_name,e.last_name,e.salary,e.dept_id
+    -> from employees e
+    -> where e.salary>(select avg(e.salary) from employees);
+Empty set (0.00 sec)
+//because
+mysql> select avg(salary) from employees;
++--------------+
+| avg(salary)  |
++--------------+
+| 57142.857143 |
++--------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT e.employee_id, e.first_name, e.last_name, e.salary
+    -> FROM employees e
+    -> WHERE e.salary > (SELECT AVG(e2.salary) FROM employees e2);
++-------------+------------+-----------+----------+
+| employee_id | first_name | last_name | salary   |
++-------------+------------+-----------+----------+
+| E003        | Rahul      | Singh     | 70000.00 |
+| E005        | Vikram     | Patil     | 90000.00 |
+| E007        | Arjun      | Desai     | 62000.00 |
+| E009        | Rohan      | Verma     | 75000.00 |
+| E010        | Jones      | Williams  | 68000.00 |
+| E102        | Riya       | Dhanwani  | 80000.00 |
++-------------+------------+-----------+----------+
+6 rows in set (0.00 sec)
+
+mysql> select d.dept_name,m.manager_name,l.city
+    -> from departments d
+    -> join manager m on d.manager_id=m.manager_id
+    -> join locations l on d.location_id=l.location_id;
++-----------+--------------+------+
+| dept_name | manager_name | city |
++-----------+--------------+------+
+| Finance   | Trilok Ahuja | Pune |
+| IT        | Trilok Ahuja | Pune |
+| HR        | Varsha Ahuja | Pune |
+| Support   | Varsha Ahuja | Pune |
+| Sales     | Varsha Ahuja | Pune |
++-----------+--------------+------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT e.first_name, e.last_name, e.hire_date, e.salary
+    -> FROM employees e
+    -> JOIN manager m ON e.manager_id = m.manager_id
+    -> WHERE DATEDIFF(CURDATE(), hire_date) / 365 > 15;
++------------+-----------+------------+----------+
+| first_name | last_name | hire_date  | salary   |
++------------+-----------+------------+----------+
+| Amit       | Sharma    | 2008-06-15 | 55000.00 |
+| Rahul      | Singh     | 2005-01-10 | 70000.00 |
+| Vikram     | Patil     | 2003-11-05 | 90000.00 |
+| Arjun      | Desai     | 2007-04-18 | 62000.00 |
+| Rohan      | Verma     | 2010-08-30 | 75000.00 |
+| Jones      | Williams  | 2006-03-12 | 68000.00 |
++------------+-----------+------------+----------+
+6 rows in set, 4 warnings (0.04 sec)

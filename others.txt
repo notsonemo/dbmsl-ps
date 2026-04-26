@@ -1,0 +1,401 @@
+ps1
+
+schema:
+CREATE TABLE Employee (
+  emp_id NUMBER PRIMARY KEY,
+  emp_name VARCHAR2(100),
+  salary NUMBER,
+  designation VARCHAR2(50)
+);
+CREATE TABLE Salary_Backup (
+  emp_id NUMBER,
+  old_salary NUMBER,
+  new_salary NUMBER,
+  salary_difference NUMBER
+);
+INSERT INTO Employee VALUES(101,'Ramesh',50000,'Manager');
+INSERT INTO Employee VALUES(102,'Suresh',80000,'CEO');
+
+trigger1-salary change:
+CREATE OR REPLACE TRIGGER trg_salary_backup
+BEFORE UPDATE OF salary ON Employee
+FOR EACH ROW
+BEGIN
+  INSERT INTO Salary_Backup(
+    emp_id, old_salary, new_salary, salary_difference
+  ) VALUES (
+    :OLD.emp_id,
+    :OLD.salary,
+    :NEW.salary,
+    :NEW.salary - :OLD.salary
+  );
+END;
+/
+-- Test:
+UPDATE Employee SET salary = 55000 WHERE emp_id = 101;
+SELECT * FROM Salary_Backup;
+
+trigger2-prevent ceo delete:
+CREATE OR REPLACE TRIGGER trg_prevent_ceo_delete
+BEFORE DELETE ON Employee
+FOR EACH ROW
+BEGIN
+  IF :OLD.designation = 'CEO' THEN
+    RAISE_APPLICATION_ERROR(
+      -20001,
+      'Cannot delete employee with designation CEO!'
+    );
+  END IF;
+END;
+/
+-- Test (will raise error):
+DELETE FROM Employee WHERE emp_id = 102;
+
+----------------------------------------------------------------------------
+
+ps7
+
+schema:
+CREATE TABLE Employee (
+  emp_id NUMBER PRIMARY KEY,
+  dept_id NUMBER,
+  emp_name VARCHAR2(100),
+  DoJ DATE,
+  salary NUMBER,
+  commission NUMBER,
+  job_title VARCHAR2(100)
+);
+CREATE TABLE job_history (
+  emp_id NUMBER,
+  old_job_title VARCHAR2(100),
+  old_dept_id NUMBER,
+  start_date DATE,
+  end_date DATE
+);
+
+trigger1-no salary decrease:
+CREATE OR REPLACE TRIGGER trg_no_salary_decrease
+BEFORE UPDATE OF salary ON Employee
+FOR EACH ROW
+BEGIN
+  IF :NEW.salary < :OLD.salary THEN
+    RAISE_APPLICATION_ERROR(
+      -20002,
+      'Salary cannot be decreased! ' ||
+      'Old: ' || :OLD.salary ||
+      ', New: ' || :NEW.salary
+    );
+  END IF;
+END;
+/
+-- Test (will raise error):
+UPDATE Employee SET salary = 30000 WHERE emp_id = 101;
+
+trigger2-job title change history
+CREATE OR REPLACE TRIGGER trg_job_history
+BEFORE UPDATE OF job_title ON Employee
+FOR EACH ROW
+BEGIN
+  IF :OLD.job_title != :NEW.job_title THEN
+    INSERT INTO job_history(
+      emp_id, old_job_title, old_dept_id,
+      start_date, end_date
+    ) VALUES (
+      :OLD.emp_id,
+      :OLD.job_title,
+      :OLD.dept_id,
+      :OLD.DoJ,         -- DoJ as start date
+      SYSDATE           -- current date as end date
+    );
+  END IF;
+END;
+/
+-- Test:
+UPDATE Employee SET job_title='Senior Manager'
+WHERE emp_id = 101;
+SELECT * FROM job_history;
+
+
+----------------------------------------------------------------------
+
+
+ps12 plsql
+schema:
+CREATE TABLE Employee (
+  emp_id NUMBER PRIMARY KEY,
+  dept_id NUMBER,
+  emp_name VARCHAR2(100),
+  DoJ DATE,
+  salary NUMBER,
+  commission NUMBER,
+  job_title VARCHAR2(100)
+);
+CREATE TABLE Departments (
+  Department_id NUMBER PRIMARY KEY,
+  Department_name VARCHAR2(100),
+  Manager_id NUMBER,
+  Manager_name VARCHAR2(100)
+);
+
+procedure-commission:
+CREATE OR REPLACE PROCEDURE calc_commission AS
+  CURSOR c_emp IS SELECT * FROM Employee;
+  v_exp   NUMBER;
+  v_comm  NUMBER;
+BEGIN
+  FOR rec IN c_emp LOOP
+    -- Years of experience
+    v_exp := FLOOR(MONTHS_BETWEEN(SYSDATE, rec.DoJ) / 12);
+
+    IF rec.salary > 10000 THEN
+      v_comm := rec.salary * 0.004;  -- 0.4%
+    ELSIF rec.salary < 10000 AND v_exp > 10 THEN
+      v_comm := rec.salary * 0.0035; -- 0.35%
+    ELSIF rec.salary < 3000 THEN
+      v_comm := rec.salary * 0.0025; -- 0.25%
+    ELSE
+      v_comm := rec.salary * 0.0015; -- 0.15%
+    END IF;
+
+    UPDATE Employee
+    SET commission = v_comm
+    WHERE emp_id = rec.emp_id;
+
+    DBMS_OUTPUT.PUT_LINE(
+      'Emp: ' || rec.emp_name ||
+      ', Commission: ' || v_comm
+    );
+  END LOOP;
+  COMMIT;
+END;
+/
+-- Execute:
+EXEC calc_commission;
+
+function:
+CREATE OR REPLACE FUNCTION get_manager_name(
+  p_dept_id Departments.Department_id%TYPE
+) RETURN VARCHAR2 AS
+  v_manager_name Departments.Manager_name%TYPE;
+BEGIN
+  SELECT Manager_name
+  INTO v_manager_name
+  FROM Departments
+  WHERE Department_id = p_dept_id;
+  RETURN v_manager_name;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RETURN 'Department not found';
+END;
+/
+-- Usage:
+DECLARE
+  v_name VARCHAR2(100);
+BEGIN
+  v_name := get_manager_name(10);
+  DBMS_OUTPUT.PUT_LINE('Manager: ' || v_name);
+END;
+/
+
+
+
+-------------------------------------------------------------------------------------------
+
+
+ps5 
+-- Q1: Parameterized cursor - Apparel in price range
+DECLARE
+  v_min_price NUMBER;
+  v_max_price NUMBER;
+  CURSOR c_prod(p_min NUMBER, p_max NUMBER) IS
+    SELECT * FROM Products
+    WHERE Product_Type = 'Apparel'
+      AND Price BETWEEN p_min AND p_max;
+  v_rec Products%ROWTYPE;
+BEGIN
+  v_min_price := &min_price;
+  v_max_price := &max_price;
+  OPEN c_prod(v_min_price, v_max_price);
+  LOOP
+    FETCH c_prod INTO v_rec;
+    EXIT WHEN c_prod%NOTFOUND;
+    DBMS_OUTPUT.PUT_LINE(
+      v_rec.Product_id || ' | ' || v_rec.Product_Name ||
+      ' | Rs.' || v_rec.Price
+    );
+  END LOOP;
+  CLOSE c_prod;
+END;
+/
+
+- Q2: Explicit cursor - Price > 5000
+DECLARE
+  CURSOR c_exp IS
+    SELECT * FROM Products WHERE Price > 5000;
+  v_rec Products%ROWTYPE;
+BEGIN
+  OPEN c_exp;
+  LOOP
+    FETCH c_exp INTO v_rec;
+    EXIT WHEN c_exp%NOTFOUND;
+    DBMS_OUTPUT.PUT_LINE(
+      v_rec.Product_Name || ' | Rs.' || v_rec.Price
+    );
+  END LOOP;
+  CLOSE c_exp;
+END;
+/
+
+-- Q3: Implicit cursor - update price by 1000
+BEGIN
+  UPDATE Products SET Price = Price + 1000;
+  DBMS_OUTPUT.PUT_LINE(
+    'Records updated: ' || SQL%ROWCOUNT
+  );
+END;
+/
+
+--------------------------------------------------------------------------------------
+
+ps10
+
+
+-- Q1: Explicit cursor - salary > 50,000
+DECLARE
+  CURSOR c_emp IS
+    SELECT Emp_id, Emp_Name, Salary
+    FROM Employee
+    WHERE Salary > 50000;
+  v_rec c_emp%ROWTYPE;
+BEGIN
+  OPEN c_emp;
+  LOOP
+    FETCH c_emp INTO v_rec;
+    EXIT WHEN c_emp%NOTFOUND;
+    DBMS_OUTPUT.PUT_LINE(
+      'ID: ' || v_rec.Emp_id ||
+      ', Name: ' || v_rec.Emp_Name ||
+      ', Salary: ' || v_rec.Salary
+    );
+  END LOOP;
+  CLOSE c_emp;
+END;
+/
+
+- Q2: Implicit cursor - total tuples in Employee
+BEGIN
+  UPDATE Employee SET Salary = Salary;  -- dummy update
+  DBMS_OUTPUT.PUT_LINE(
+    'Total rows in Employee: ' || SQL%ROWCOUNT
+  );
+END;
+/
+-- OR using SELECT COUNT:
+DECLARE
+  v_count NUMBER;
+BEGIN
+  SELECT COUNT(*) INTO v_count FROM Employee;
+  DBMS_OUTPUT.PUT_LINE('Total employees: ' || v_count);
+END;
+/
+
+- Q3: Parameterized cursor - salary of given emp_id
+DECLARE
+  v_emp_id Employee.Emp_id%TYPE;
+  CURSOR c_emp(p_id Employee.Emp_id%TYPE) IS
+    SELECT Emp_Name, Salary FROM Employee
+    WHERE Emp_id = p_id;
+  v_name  Employee.Emp_Name%TYPE;
+  v_salary Employee.Salary%TYPE;
+BEGIN
+  v_emp_id := &emp_id;  -- Accept from user
+  OPEN c_emp(v_emp_id);
+  FETCH c_emp INTO v_name, v_salary;
+  IF c_emp%FOUND THEN
+    DBMS_OUTPUT.PUT_LINE(
+      'Name: ' || v_name || ', Salary: ' || v_salary
+    );
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('Employee not found.');
+  END IF;
+  CLOSE c_emp;
+END;
+/
+
+--------------------------------------------------------------------------------
+
+ps15
+
+schema:
+CREATE TABLE Employee (
+  emp_id NUMBER PRIMARY KEY,
+  dept_id NUMBER,
+  emp_name VARCHAR2(100),
+  DoJ DATE,
+  salary NUMBER,
+  commission NUMBER,
+  job_title VARCHAR2(100)
+);
+CREATE TABLE Salary_Increment (
+  emp_id NUMBER,
+  new_salary NUMBER
+);
+______________________________________
+unnamed block w exception
+DECLARE
+  v_emp_id    Employee.emp_id%TYPE;
+  v_salary    Employee.salary%TYPE;
+  v_doj       Employee.DoJ%TYPE;
+  v_exp       NUMBER;
+  v_new_salary NUMBER;
+
+  -- User-defined exception
+  ex_emp_not_found EXCEPTION;
+BEGIN
+  v_emp_id := &emp_id;  -- Accept emp_id from user
+
+  -- Fetch employee details
+  BEGIN
+    SELECT salary, DoJ INTO v_salary, v_doj
+    FROM Employee WHERE emp_id = v_emp_id;
+  EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+      RAISE ex_emp_not_found;
+  END;
+
+  -- Calculate experience in years
+  v_exp := FLOOR(MONTHS_BETWEEN(SYSDATE, v_doj) / 12);
+
+  -- Apply increment based on experience
+  IF v_exp > 10 THEN
+    v_new_salary := v_salary * 1.20;  -- 20% hike
+  ELSIF v_exp > 5 THEN
+    v_new_salary := v_salary * 1.10;  -- 10% hike
+  ELSE
+    v_new_salary := v_salary * 1.05;  -- 5% hike
+  END IF;
+
+  -- Update salary
+  UPDATE Employee SET salary = v_new_salary
+  WHERE emp_id = v_emp_id;
+
+  -- Store in Salary_Increment table
+  INSERT INTO Salary_Increment(emp_id, new_salary)
+  VALUES(v_emp_id, v_new_salary);
+
+  COMMIT;
+  DBMS_OUTPUT.PUT_LINE(
+    'Emp ID: ' || v_emp_id ||
+    ' | Old Salary: ' || v_salary ||
+    ' | New Salary: ' || v_new_salary ||
+    ' | Experience: ' || v_exp || ' yrs'
+  );
+
+EXCEPTION
+  WHEN ex_emp_not_found THEN
+    DBMS_OUTPUT.PUT_LINE('ERROR: Employee ID not found!');
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLERRM);
+    ROLLBACK;
+END;
+/

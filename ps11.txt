@@ -1,0 +1,76 @@
+///SCHEMA SAME AS ps4///
+
+mysql> select e.first_name,e.last_name,e.salary
+    -> from employees e
+    -> where e.salary>(select e2.salary from employees e2 where e2.last_name='Singh');
++------------+-----------+----------+
+| first_name | last_name | salary   |
++------------+-----------+----------+
+| Vikram     | Patil     | 90000.00 |
+| Rohan      | Verma     | 75000.00 |
+| Riya       | Dhanwani  | 80000.00 |
++------------+-----------+----------+
+3 rows in set (0.00 sec)
+
+mysql> select e.first_name,e.last_name
+    -> from employees e
+    -> join departments d on e.dept_id=d.dept_id
+    -> join locations l on d.location_id=l.location_id
+    -> where e.manager_id is not null
+    -> and l.country_id='US12';
+Empty set (0.00 sec)
+
+mysql> select e.first_name,e.last_name,e.salary
+    -> from employees e
+    -> where e.salary>(select avg(e2.salary) from employees e2);
++------------+-----------+----------+
+| first_name | last_name | salary   |
++------------+-----------+----------+
+| Rahul      | Singh     | 70000.00 |
+| Vikram     | Patil     | 90000.00 |
+| Arjun      | Desai     | 62000.00 |
+| Rohan      | Verma     | 75000.00 |
+| Jones      | Williams  | 68000.00 |
+| Riya       | Dhanwani  | 80000.00 |
++------------+-----------+----------+
+6 rows in set (0.00 sec)
+
+mysql> select e.employee_id,e.last_name,m.manager_id,m.manager_name
+    -> from employees e
+    -> join manager m on e.manager_id=m.manager_id;
++-------------+-----------+------------+--------------+
+| employee_id | last_name | manager_id | manager_name |
++-------------+-----------+------------+--------------+
+| E001        | Sharma    | M101       | Varsha Ahuja |
+| E003        | Singh     | M101       | Varsha Ahuja |
+| E005        | Patil     | M101       | Varsha Ahuja |
+| E007        | Desai     | M101       | Varsha Ahuja |
+| E009        | Verma     | M101       | Varsha Ahuja |
+| E103        | Morwani   | M101       | Varsha Ahuja |
+| E104        | Morwani   | M101       | Varsha Ahuja |
+| E002        | Mehta     | M102       | Trilok Ahuja |
+| E004        | Joshi     | M102       | Trilok Ahuja |
+| E006        | Kulkarni  | M102       | Trilok Ahuja |
+| E008        | Nair      | M102       | Trilok Ahuja |
+| E010        | Williams  | M102       | Trilok Ahuja |
+| E101        | Ahuja     | M102       | Trilok Ahuja |
+| E102        | Dhanwani  | M102       | Trilok Ahuja |
++-------------+-----------+------------+--------------+
+14 rows in set (0.00 sec)
+
+mysql> select e.first_name,e.last_name,e.hire_date
+    -> from employees e
+    -> where e.hire_date>(select hire_date from employees where first_name='Jones')
+    -> ;
++------------+-----------+------------+
+| first_name | last_name | hire_date  |
++------------+-----------+------------+
+| Amit       | Sharma    | 2008-06-15 |
+| Priya      | Mehta     | 2012-03-20 |
+| Sneha      | Joshi     | 2018-07-22 |
+| Neha       | Kulkarni  | 2015-09-13 |
+| Arjun      | Desai     | 2007-04-18 |
+| Pooja      | Nair      | 2019-02-28 |
+| Rohan      | Verma     | 2010-08-30 |
++------------+-----------+------------+
+7 rows in set (0.00 sec)
